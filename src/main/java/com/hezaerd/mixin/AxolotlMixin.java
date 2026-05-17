@@ -1,7 +1,9 @@
 package com.hezaerd.mixin;
 
+import com.hezaerd.PawsPals;
 import com.hezaerd.accessor.AxolotlAccessor;
 import com.hezaerd.entity.ia.goal.AxolotlFollowOwnerGoal;
+import com.hezaerd.entity.ia.goal.AxolotlLandOnOwnerShoulderGoal;
 import com.hezaerd.entity.ia.goal.AxolotlSitWhenOrderedToGoal;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -9,16 +11,19 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -32,6 +37,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.NonNull;
@@ -84,7 +90,7 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
             if (owner != null) {
                 this.entityData.set(DATA_OWNERUUID_ID, Optional.of(owner));
             }
-            this.pawspals$setTame(true, true);
+            this.pawspals$setTame(true, false);
         }
         this.orderedToSit = input.getBooleanOr("pawspals:Sitting", false);
         this.pawspals$setInSittingPose(this.orderedToSit);
@@ -110,9 +116,10 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
             try {
                 this.entityData.set(DATA_OWNERUUID_ID,
                         Optional.of(EntityReference.of(UUID.fromString(uuidStr))));
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+            }
         });
-        this.pawspals$setTame(true, true);
+        this.pawspals$setTame(true, false);
         this.orderedToSit = tag.getBooleanOr("pawspals:Sitting", false);
         this.pawspals$setInSittingPose(this.orderedToSit);
     }
@@ -130,14 +137,24 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
                 cir.setReturnValue(InteractionResult.SUCCESS);
                 return;
             }
-            if (self.isFood(itemStack) || itemStack.is(Items.WATER_BUCKET)) return;
+            if (itemStack.is(Items.WATER_BUCKET)) {
+                if (!this.pawspals$isOwnedBy(player)) {
+                    cir.setReturnValue(InteractionResult.SUCCESS);
+                }
+                return;
+            }
+            if (self.isFood(itemStack)) return;
             if (this.pawspals$isOwnedBy(player)) {
+                if (player.isSecondaryUseActive() && player instanceof ServerPlayer serverPlayer) {
+                    if (!this.isLeashed() && pawspals$setEntityOnShoulder(serverPlayer)) {
+                        cir.setReturnValue(InteractionResult.SUCCESS);
+                        return;
+                    }
+                }
                 if (!this.level().isClientSide()) {
                     this.pawspals$setOrderedToSit(!this.orderedToSit);
                     this.jumping = false;
                     this.getNavigation().stop();
-
-                    player.sendSystemMessage(Component.literal("sit"));
                 }
                 cir.setReturnValue(InteractionResult.SUCCESS.withoutItem());
             }
@@ -158,7 +175,6 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }
-
 
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
@@ -212,8 +228,10 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
     @Inject(method = "<init>", at = @At("RETURN"))
     private void pawspals$onInit(EntityType<? extends Axolotl> type, Level level,
                                  CallbackInfo ci) {
-        this.goalSelector.addGoal(1, new AxolotlSitWhenOrderedToGoal((Axolotl) (Object) this));
-        this.goalSelector.addGoal(4, new AxolotlFollowOwnerGoal((Axolotl) (Object) this, 1.0, 10.0F, 2.0F));
+        Axolotl self = (Axolotl) (Object) this;
+        this.goalSelector.addGoal(1, new AxolotlSitWhenOrderedToGoal(self));
+        this.goalSelector.addGoal(4, new AxolotlFollowOwnerGoal(self, 1.0, 10.0F, 2.0F));
+        this.goalSelector.addGoal(4, new AxolotlLandOnOwnerShoulderGoal(self));
     }
 
     @Nullable
@@ -233,7 +251,8 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
         this.entityData.set(DATA_FLAGS_ID, isTame
                 ? (byte) (current | 4)
                 : (byte) (current & ~4));
-        if (includeSideEffects) pawspals$applyTamingSideEffects();
+        pawspals$applyTamingAttributes();
+        if (includeSideEffects && isTame) this.setHealth(this.getMaxHealth());
     }
 
     @Unique
@@ -307,10 +326,9 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
     }
 
     @Unique
-    public void pawspals$applyTamingSideEffects() {
+    public void pawspals$applyTamingAttributes() {
         if (this.pawspals$isTame()) {
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(40.0F);
-            this.setHealth(40.0F);
         } else {
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(14.0F);
         }
@@ -360,5 +378,21 @@ public abstract class AxolotlMixin extends Animal implements AxolotlAccessor, Ow
         if (pathType != PathType.WALKABLE && pathType != PathType.WATER) return false;
         BlockPos delta = pos.subtract(this.blockPosition());
         return this.level().noCollision(this, this.getBoundingBox().move(delta));
+    }
+
+    @Override
+    @Unique
+    public boolean pawspals$setEntityOnShoulder(ServerPlayer player) {
+        try (ProblemReporter.ScopedCollector reporter =
+                     new ProblemReporter.ScopedCollector(this.problemPath(), PawsPals.LOGGER)) {
+            TagValueOutput output = TagValueOutput.createWithContext(reporter, this.registryAccess());
+            this.saveWithoutId(output);
+            output.putString("id", this.getEncodeId());
+            if (player.setEntityOnShoulder(output.buildResult())) {
+                this.discard();
+                return true;
+            }
+        }
+        return false;
     }
 }

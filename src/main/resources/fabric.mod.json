@@ -1,31 +1,38 @@
 {
-	"schemaVersion": 1,
-	"id": "pawspals",
-	"version": "${version}",
-	"name": "Paws & Pals",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/pawspals/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.hezaerd.PawsPals"
-		]
-	},
-	"mixins": [
-		"pawspals.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.19.2",
-		"minecraft": "~26.1.1",
-		"java": ">=25",
-		"fabric-api": "*"
-	}
+  "schemaVersion": 1,
+  "id": "pawspals",
+  "version": "${version}",
+  "name": "Paws & Pals",
+  "description": "Paws & Pals expands vanilla mobs with taming, companionship, and adventure-ready pet behavior.",
+  "authors": [
+    "Hezaerd"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/pawspals",
+    "sources": "https://github.com/Hezaerd/paws-and-pals"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "Website": "https://hezaerd.com"
+      }
+    }
+  },
+  "license": "MIT",
+  "icon": "assets/pawspals/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hezaerd.PawsPals"
+    ]
+  },
+  "mixins": [
+    "pawspals.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "~26.1.1",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
 }

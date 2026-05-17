@@ -1,5 +1,6 @@
 package com.hezaerd.accessor;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jspecify.annotations.Nullable;
@@ -19,4 +20,5 @@ public interface AxolotlAccessor {
     void pawspals$tryToTeleportToOwner();
     boolean pawspals$unableToMoveToOwner();
     void pawspals$spawnTamingParticles(boolean success);
+    boolean pawspals$setEntityOnShoulder(ServerPlayer player);
 }

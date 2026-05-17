@@ -1,15 +1,21 @@
 {
-	"required": true,
-	"package": "com.hezaerd.mixin",
-	"compatibilityLevel": "JAVA_25",
-	"mixins": [
-		"AxolotlMixin",
-		"AnimalMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "com.hezaerd.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "AnimalMixin",
+    "AxolotlMixin",
+    "PlayerMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "AvatarRenderStateMixin",
+    "client.AvatarRendererMixin"
+  ]
 }
