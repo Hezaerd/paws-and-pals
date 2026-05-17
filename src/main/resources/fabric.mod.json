@@ -1,41 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "betteraxolotls",
+	"id": "pawspals",
 	"version": "${version}",
-	"name": "betteraxolotls",
-	"description": "Axolotls are now your loyal, shoulder-riding pals! Tame these adorable amphibians and bring them on all your adventures.",
+	"name": "Paws & Pals",
+	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Hezaerd"
+		"Me!"
 	],
 	"contact": {
-		"homepage": "https://modrinth.com/mod/betteraxolotls",
-		"sources": "https://github.com/Hezaerd/BetterAxolotls"
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"custom":{
-		"modmenu": {
-			"links": {
-				"Website": "https://hezaerd.com"
-			}
-		}
-	},
-	"license": "MIT",
-	"icon": "assets/betteraxolotls/icon.png",
+	"license": "CC0-1.0",
+	"icon": "assets/pawspals/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.hezaerd.BetterAxolotls"
+			"com.hezaerd.PawsPals"
 		]
 	},
 	"mixins": [
-		"betteraxolotls.mixins.json"
+		"pawspals.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.5",
-		"java": ">=21",
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.1.1",
+		"java": ">=25",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }

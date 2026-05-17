@@ -1,0 +1,25 @@
+---
+description: Fabric mod guidance for Minecraft 26.1.1 using official Mojang mappings
+alwaysApply: true
+---
+
+# Fabric Mod Guidance
+
+- Target versions:
+  - Minecraft `26.1.1`
+  - Fabric Loader `0.19.2`
+  - Fabric API `0.145.4+26.1.1`
+- Use official Mojang mappings only. Do not answer with Yarn names unless the user explicitly asks for a cross-reference.
+- Prefer Fabric documentation first for APIs, setup, data generation, mixins, networking, rendering, and other modding workflows: [Developer Guides](https://docs.fabricmc.net/develop/).
+- When implementation details are unclear, inspect extracted vanilla sources from `minecraft-src` before guessing behavior.
+- Treat `minecraft-src` as reference code only unless the user explicitly asks to modify it.
+- Match Fabric and Mojang naming exactly when suggesting classes, methods, fields, events, registries, tags, NBT/data components, and JSON resource structures.
+- Prefer Fabric-supported hooks, APIs, events, and data-driven content over invasive mixins when both approaches are viable.
+- Keep examples aligned with this project's Java/Fabric setup and Gradle-based workflow.
+- If documentation and decompiled source disagree, call out the mismatch and explain which source is more trustworthy for the current task.
+
+## Good defaults
+
+- Check Fabric docs for the feature area before inventing an approach.
+- Verify vanilla behavior in `minecraft-src` when targeting entity AI, item use, NBT persistence, rendering, or registry behavior.
+- Write guidance and code samples using Mojang-mapped symbols.
