@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:husbandry/place_dried_ghast_in_water",
+  "criteria": {
+    "called_happy_ghast": {
+      "trigger": "pawspals:called_happy_ghast"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.pawspals.husbandry.called_happy_ghast.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "pawspals:happy_ghast_whistle"
+    },
+    "title": {
+      "translate": "advancements.pawspals.husbandry.called_happy_ghast.title"
+    }
+  },
+  "requirements": [
+    [
+      "called_happy_ghast"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

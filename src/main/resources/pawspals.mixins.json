@@ -5,6 +5,7 @@
   "mixins": [
     "AnimalMixin",
     "AxolotlMixin",
+    "HappyGhastMixin",
     "PlayerMixin",
     "ServerPlayerMixin"
   ],

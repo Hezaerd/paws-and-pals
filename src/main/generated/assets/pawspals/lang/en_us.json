@@ -1,0 +1,7 @@
+{
+  "advancements.pawspals.husbandry.called_happy_ghast.description": "Blow the Happy Ghast Whistle and call a nearby Happy Ghast to you",
+  "advancements.pawspals.husbandry.called_happy_ghast.title": "Heard and Answered",
+  "item.pawspals.happy_ghast_whistle": "Happy Ghast Whistle",
+  "message.pawspals.happy_ghast_whistle.no_target": "No Happy Ghast nearby to call.",
+  "message.pawspals.happy_ghast_whistle.success": "A Happy Ghast heard your whistle!"
+}

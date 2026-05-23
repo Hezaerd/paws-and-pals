@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "multi_bench",
+  "key": {
+    "E": "minecraft:echo_shard",
+    "G": "minecraft:ghast_tear",
+    "T": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    " E ",
+    "GTG",
+    " G "
+  ],
+  "result": {
+    "id": "pawspals:happy_ghast_whistle"
+  }
+}

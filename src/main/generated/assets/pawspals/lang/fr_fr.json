@@ -1,0 +1,7 @@
+{
+  "advancements.pawspals.husbandry.called_happy_ghast.description": "Soufflez dans un sifflet à ghast joyeux pour qu'un ghast joyeux des environs vienne à vous",
+  "advancements.pawspals.husbandry.called_happy_ghast.title": "Répondez s'il ghast plait",
+  "item.pawspals.happy_ghast_whistle": "Sifflet à ghast joyeux",
+  "message.pawspals.happy_ghast_whistle.no_target": "Aucun ghast joyeux n'a entendu votre appel.",
+  "message.pawspals.happy_ghast_whistle.success": "Un ghast joyeux a entendu votre sifflet!"
+}
